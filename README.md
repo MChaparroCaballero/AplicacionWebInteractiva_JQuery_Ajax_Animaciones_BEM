@@ -6,6 +6,7 @@ Este proyecto es una prueba de concepto (POC) que implementa una transición flu
 ## 🚀 Características
 
 * **Animación CSS Pura:** Uso de `clip-path: circle()` para un efecto de "revelado" suave al loguearse.
+* **Fondo Ondulado:** Uso de `clip-path: circle()` para crear un semicírculo atractivo desde arriba sin imágenes pesadas.
 * **Single Page Feel:** No recarga la página al pasar del login a la tabla (SPA simulada).
 * **Interfaz:** Diseño limpio utilizando **Bootstrap 5**.
 * **Backend Ready:** Estructura preparada para recibir JSON de un backend PHP/MySQL.
@@ -21,16 +22,6 @@ Este proyecto es una prueba de concepto (POC) que implementa una transición flu
 El núcleo de la animación reside en la manipulación de la propiedad `clip-path`.
 
 ### CSS (La Magia)
-El contenedor del login cubre la pantalla inicialmente. Al añadir la clase `.slide-out`, el círculo se cierra.
+El contenedor del login cubre la pantalla inicialmente.
 
-```css
-#login-view {
-    /* Estado inicial: Círculo cubriendo toda la pantalla */
-    clip-path: circle(150% at 50% 50%);
-    transition: clip-path 1.5s cubic-bezier(0.77, 0, 0.175, 1);
-}
-
-#login-view.slide-out {
-    /* Estado final: El círculo desaparece */
-    clip-path: circle(0% at 50% 50%);
-}
+Para el fondo ondulado, se utiliza un div vacío con `clip-path: circle(50% at 50% 0%)` para crear un semicírculo en la parte superior que añade dinamismo visual sin necesidad de imágenes.
