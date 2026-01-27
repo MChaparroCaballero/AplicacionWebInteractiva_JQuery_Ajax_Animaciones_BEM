@@ -1,3 +1,5 @@
+// Variable global para controlar la página (NUEVO)
+let paginaActual = 1;
 $('#loginBtn').click(function(e) {
     e.preventDefault();
    $.ajax({
@@ -27,8 +29,13 @@ $('#loginBtn').click(function(e) {
                             <!-- Aquí se agregarán las filas de productos -->
                         </tbody>
                     </table>
+                    <div id="paginacion" style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
+                        <button id="btnAnterior" class="btn-paginacion">Anterior</button>
+                        <span id="infoPagina">Página 1</span>
+                        <button id="btnSiguiente" class="btn-paginacion">Siguiente</button>
+                    </div>
                 `);
-                cargarProductos(); 
+                cargarProductos(1); 
                 
             } else {
                 alert("El usuario no existe en la BD");
@@ -38,6 +45,18 @@ $('#loginBtn').click(function(e) {
         }
    })});
 
+// NUEVO: Eventos para los botones de paginación (Delegación de eventos)
+$(document).on('click', '#btnAnterior', function() {
+    if (paginaActual > 1) {
+        cargarProductos(paginaActual - 1);
+    }
+});
+
+$(document).on('click', '#btnSiguiente', function() {
+    // La validación del límite se hace mejor dentro de cargarProductos o con un atributo data
+    cargarProductos(paginaActual + 1);
+});
+
 //Agreagmos un evento de Jquery al boton de cancelar para resetear el formulario.
 $('#cancelBtn').click(function(e) {
    document.getElementById("loginForm").reset();
@@ -45,10 +64,11 @@ $('#cancelBtn').click(function(e) {
 });
 
 //Funcion que carga los productos mediante AJAX creando elementos de la tabla.
-function cargarProductos() {
+function cargarProductos(pagina) {
     $.ajax({
         url: 'php/productos.php',
         method: 'GET',
+        data: { pagina: pagina },
         dataType: 'json',
         success: function(respuestaProductos) {
             // Limpiamos el tbody antes de agregar por si las moscas
@@ -68,6 +88,16 @@ function cargarProductos() {
                     </tr>
                 `);
             });
+
+            // NUEVO: Actualizamos lógica de paginación visual
+                paginaActual = respuestaProductos.meta.paginaActual;
+                let totalPaginas = respuestaProductos.meta.totalPaginas;
+
+                $('#infoPagina').text(`Página ${paginaActual} de ${totalPaginas}`);
+
+                // Deshabilitar/Habilitar botones
+                $('#btnAnterior').prop('disabled', paginaActual === 1);
+                $('#btnSiguiente').prop('disabled', paginaActual >= totalPaginas);
 
             // Animamos las filas una por una
             $('.table-productos__row').each(function(index) {
